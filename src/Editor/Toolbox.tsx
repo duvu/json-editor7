@@ -1,13 +1,15 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import JsonSchemaService from '../services/json-schema.service';
+import JsonSchemaList from './JsonSchemaList';
 import { ItemTypes, useStore, useTreeView } from './model';
 
 export interface ToolboxProps {
   clear: () => void;
+  setStore: (store: any) => void;
 }
 
-const Toolbox: React.FC<ToolboxProps> = ({clear}) => {
+const Toolbox: React.FC<ToolboxProps> = ({clear, setStore}) => {
   const tree = useTreeView();
   const store = useStore();
   
@@ -41,9 +43,9 @@ const Toolbox: React.FC<ToolboxProps> = ({clear}) => {
       ))}
 
       <Button onClick={saveStore}>Save</Button>
-      <Button>View JSON Schema</Button>
       <Button onClick={clear}>Clear</Button>
       
+      <JsonSchemaList setStore={setStore}/>
     </StyledToolbox>
   );
 };

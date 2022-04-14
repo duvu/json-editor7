@@ -112,10 +112,10 @@ const Editor: React.FC = () => {
     <Context.Provider value={contextValue}>
       <Container>
         <TreeView />
-        {/* <JsonView/> */}
+        <JsonView/>
         <JsonSchemaView/>
-        <Toolbox clear = {clear} />
-        <JsonSchemaList/>
+        <Toolbox clear = {clear} setStore={setTreeStore}/>
+        
       </Container>
     </Context.Provider>
   );
@@ -125,7 +125,7 @@ export default Editor;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 700px 2fr 2fr 2fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   grid-gap: 10px;
   height: 100%;
 `;
