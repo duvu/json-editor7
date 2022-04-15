@@ -52,7 +52,7 @@ yarn build
 ```
 
 ### Setup frontend
-Copy the content in folder build to destination folder, asume that is `/home/ubuntu/jsoneditor7`
+Copy the content in folder `build` to destination folder, asume that is `/home/ubuntu/jsoneditor7`
 
 Edit nginx's config to add root point to the destination folder
 
