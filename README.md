@@ -1,12 +1,6 @@
 # Build & Setup on Ubuntu
 Prerequisite: Java JDK version >= 1.8, nodejs lts v16
 
-### Build backend
-```
-./gradlew build
-```
-Copy file `jsoneditor2-0.0.1.jar` in folder `build/libs/` to destination server 
-
 ### Install mongodb
 Please follow the link `https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/` to install Mongodb.
 
@@ -14,6 +8,14 @@ Please follow the link `https://www.mongodb.com/docs/manual/tutorial/install-mon
 ```
 sudo apt install nginx
 ```
+
+### Build backend
+Update resources file `application.properties` for Mongodb credentials if need.
+
+```
+./gradlew build
+```
+Copy file `jsoneditor2-0.0.1.jar` in folder `build/libs/` to destination server 
 
 ### Run backend as service
 Let's use `screen` to run the app as service quickly
