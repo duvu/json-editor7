@@ -1,46 +1,98 @@
-# Getting Started with Create React App
+# Build & Setup on Ubuntu
+Prerequisite: Java JDK version >= 1.8, nodejs lts v16
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Build backend
+```
+./gradlew build
+```
+Copy file `jsoneditor2-0.0.1.jar` in folder `build/libs/` to destination server 
 
-## Available Scripts
+### Install mongodb
+Please follow the link `https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/` to install Mongodb.
 
-In the project directory, you can run:
+### Install nginx
+```
+sudo apt install nginx
+```
 
-### `yarn start`
+### Run backend as service
+Let's use `screen` to run the app as service quickly
+```bash
+screen
+```
+```
+java -jar jsoneditor2-0.0.1.jar
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Press `Ctrl + A` then `D` to bring `screen` into background.
+The application is now running on port `8080`.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Configure Nginx as transparent proxy
+Let's add an entry location to nginx's configuration as follow.
 
-### `yarn test`
+```
+	location /api/ {
+	        proxy_set_header X-Real-IP $remote_addr;
+        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	        proxy_set_header Host $http_host;
+	        proxy_set_header X-NginX-Proxy true;
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+        	proxy_cookie_path / "/; secure; HttpOnly; SameSite=none";
 
-### `yarn build`
+	        proxy_pass http://127.0.0.1:8080/api/;
+        	proxy_redirect off;
+	}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Done on backend.
+### Build frondend
+```
+yarn build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Setup frontend
+Copy the content in folder build to destination folder, asume that is `/home/ubuntu/jsoneditor7`
 
-### `yarn eject`
+Edit nginx's config to add root point to the destination folder
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+	root /home/ubuntu/jsoneditor7;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+	index index.html index.htm index.nginx-debian.html;
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+	server_name _;
 
-## Learn More
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+	location /api/ {
+	        proxy_set_header X-Real-IP $remote_addr;
+        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	        proxy_set_header Host $http_host;
+	        proxy_set_header X-NginX-Proxy true;
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+        	proxy_cookie_path / "/; secure; HttpOnly; SameSite=none";
+
+	        proxy_pass http://127.0.0.1:8080/api/;
+        	proxy_redirect off;
+
+	}
+
+}
+
+
+```
+
+Reload nginx & access the app at the port 80
+
+```
+sudo nginx -s reload
+```
