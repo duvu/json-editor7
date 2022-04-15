@@ -16,4 +16,5 @@ export default JsonSchemaView;
 
 const StyledJsonSchemaView = styled.div`
     padding: 8px;
+    height: 100%;
 `;

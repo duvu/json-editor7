@@ -61,5 +61,6 @@ export default TreeView;
 const StyledTreeViewContainer = styled.div<{ dragOver: boolean }>`
   height: 100%;
   background-color: ${(p) => (p.dragOver ? '#ddd5' : undefined)};
+  overflow: auto;
 `;
 

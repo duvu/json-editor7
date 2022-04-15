@@ -20,7 +20,9 @@ const Toolbox: React.FC<ToolboxProps> = ({clear, setStore}) => {
 
   const saveStore = useCallback(() => {
     console.log('saveStore', store);
-    JsonSchemaService.createSchema(JSON.stringify(store));
+    JsonSchemaService.createSchema(JSON.stringify(store)).then(x => {
+
+    });
   }, [store]);
 
 

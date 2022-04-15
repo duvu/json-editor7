@@ -24,16 +24,18 @@ const Header = styled.header`
 `;
 
 const AppWrapper = styled.div`
-  height: 100vh;
   display: grid;
+  height: 100vh;
   grid-template-rows: 50px 1fr;
   grid-template-areas:
     'header'
     'main';
-
+  grid-gap: 0.25rem;
   main {
     grid-area: main;
+    height: calc(100vh - 50px);
   }
+
 `;
 
 export default App;

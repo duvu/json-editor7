@@ -10,7 +10,6 @@ interface JsonSchemaListProps {
 const JsonSchemaList: React.FC<JsonSchemaListProps> = (props) => {
     const { setStore } = props;
     const schema = useSchema();
-    // const [schemas, setSchemas] = React.useState<any[]>([]);
     const [schemas, setSchemas] = React.useState<any[]>([]);
 
     useEffect(() => {

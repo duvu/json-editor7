@@ -5,7 +5,6 @@ import Toolbox from './Toolbox';
 import TreeView from './TreeView';
 import JsonView from './JsonView';
 import JsonSchemaView from './JsonSchemaView';
-import JsonSchemaList from './JsonSchemaList';
 
 const Editor: React.FC = () => {
   const [treeStore, setTreeStore] = useState<TreeStore>([
@@ -125,7 +124,7 @@ export default Editor;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  grid-gap: 10px;
-  height: 100%;
+  grid-template-columns: 3fr 2fr 1fr 1fr;
+  grid-gap: 0.25rem;
+  height: calc(100vh - 50px);
 `;

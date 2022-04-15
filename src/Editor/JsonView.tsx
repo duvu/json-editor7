@@ -17,10 +17,10 @@ export default JsonView;
 const StyledJsonView = styled.div`
 padding-left: 15px;
   position: relative;
+  overflow-y: auto;
 
   &::before {
     content: '';
-    height: 100%;
     left: 15px;
     top: 0px;
     width: 1px;

@@ -37,22 +37,31 @@ const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
 
     return (
         <StyledNodeView>
-            <NodeLabel
+            <Node
                 draggable
                 onDragStart={onDragStart}
                 data-item={JSON.stringify(node)}
                 data-node-id={node.id}>
 
+                
                 {
                     node.isEditing ? <EditName node={node} setEdit={setEdit} setNewName={setNewName}/> : node.type + ': ' + node.name
                         
                 }
+                
+                    <Button onClick={() => setEdit(node.id, true)}>edit</Button>
+                    {
+                        node.id !== 'root' && <Button onClick={remove}>del</Button>
+                    }
+                    {
+                        node.id !== 'root' && <Button onClick={up}>up</Button>
+                    }
+                    {
+                        node.id !== 'root' && <Button onClick={down}>down</Button>
+                    }
 
-                <Button onClick={() => setEdit(node.id, true)}>edit</Button>
-                <Button onClick={remove}>del</Button>
-                <Button onClick={up}>up</Button>
-                <Button onClick={down}>down</Button>
-            </NodeLabel>
+            
+            </Node>
 
             <ChildrenView>
                 {
@@ -112,7 +121,7 @@ const StyledNodeView = styled.div`
   padding-left: 15px;
 `;
 
-const NodeLabel = styled.div`
+const Node = styled.div`
   border: 1px solid #d8d8d8;
   padding: 5px 10px;
   position: relative;
@@ -126,6 +135,14 @@ const NodeLabel = styled.div`
     background-color: #f0f0f0;
     position: absolute;
   }
+`;
+
+const NodeLabel = styled.div`
+    grid-area: label;
+`;
+
+const NodeActions = styled.div`
+    grid-area: actions;
 `;
 
 const Button = styled.button`
