@@ -45,10 +45,7 @@ const TreeView: React.FC = () => {
 
     return (
         <StyledTreeViewContainer
-            dragOver={dragOver}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDrop={(e) => onDrop(e)}>
+            dragOver={dragOver}>
             {
                 <NodeView key={tree.id} {...tree} />
             }

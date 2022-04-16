@@ -1,6 +1,7 @@
-import {TreeNode, useDel, useEdit, useEditing, useMoveDown, useMoveUp} from "./model";
-import {useCallback} from "react";
+import {ItemType, TreeNode, useAppend, useDel, useEdit, useEditing, useMoveDown, useMoveUp} from "./model";
+import {useCallback, useState} from "react";
 import styled from "styled-components";
+import { nanoid } from "nanoid";
 
 const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
     const delHook = useDel();
@@ -8,7 +9,43 @@ const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
     const editingHook = useEditing();
     const moveUpHook = useMoveUp();
     const moveDownHook = useMoveDown();
-    
+    const appendHook = useAppend();
+    // --------------------------------------------------
+    const onDrop = useCallback(
+        (e: React.DragEvent) => {
+            try {
+                const item = JSON.parse(e.dataTransfer.getData('item')) as ItemType;
+                console.log('Drop', item);
+                
+                appendHook({
+                    id: nanoid(),
+                    type: item.type,
+                    name: item.name,
+                    value: item.value,
+                    isEditing: false,
+                    parent: (e.target as HTMLElement).dataset.nodeId || 'root',
+                });
+                setDragOver(false);
+            } catch (e) {
+                //
+                console.log('Exception JSON//')
+            }
+        },
+        [appendHook],
+    );
+
+    const [dragOver, setDragOver] = useState(false);
+    const onDragOver = useCallback((e) => {
+        e.preventDefault();
+        setDragOver(true);
+        return true;
+    }, []);
+
+    const onDragLeave = useCallback((e) => {
+        e.preventDefault();
+        setDragOver(false);
+    }, []);
+    // --------------------------------------------------
 
     const onDragStart = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         console.log('NodeView', e.currentTarget.dataset);
@@ -39,6 +76,11 @@ const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
         <StyledNodeView>
             <Node
                 draggable
+                dragOver={dragOver}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={(e) => onDrop(e)}
+
                 onDragStart={onDragStart}
                 data-item={JSON.stringify(node)}
                 data-node-id={node.id}>
@@ -121,11 +163,11 @@ const StyledNodeView = styled.div`
   padding-left: 15px;
 `;
 
-const Node = styled.div`
+const Node = styled.div<{ dragOver: boolean }>`
   border: 1px solid #d8d8d8;
   padding: 5px 10px;
   position: relative;
-
+  background-color: ${(p) => (p.dragOver ? '#ddd5' : undefined)};
   &::before {
     content: '';
     height: 1px;
