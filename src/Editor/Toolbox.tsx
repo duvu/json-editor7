@@ -2,26 +2,24 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import JsonSchemaService from '../services/json-schema.service';
 import JsonSchemaList from './JsonSchemaList';
-import { ItemTypes, useStore, useTreeView } from './model';
+import { ItemTypes, useAppendSchema, useStore, useTreeView } from './model';
 
 export interface ToolboxProps {
   clear: () => void;
   setStore: (store: any) => void;
+  setSchemaList: (list: any) => void;
+  appendSchema: (schema: any) => void;
 }
 
-const Toolbox: React.FC<ToolboxProps> = ({clear, setStore}) => {
-  const tree = useTreeView();
+const Toolbox: React.FC<ToolboxProps> = ({clear, setStore, setSchemaList}) => {
   const store = useStore();
+
+  const appendSchemaHook = useAppendSchema();
   
   const saveSchema = useCallback(() => {
-    console.log('saveSchema', tree);
-    JsonSchemaService.createSchema(JSON.stringify(tree));
-  }, [tree]);
-
-  const saveStore = useCallback(() => {
-    console.log('saveStore', store);
     JsonSchemaService.createSchema(JSON.stringify(store)).then(x => {
-
+      const r = JSON.parse(x.document)[0];
+      appendSchemaHook({id: x.id, name: r.name});
     });
   }, [store]);
 
@@ -44,10 +42,10 @@ const Toolbox: React.FC<ToolboxProps> = ({clear, setStore}) => {
         </Item>
       ))}
 
-      <Button onClick={saveStore}>Save</Button>
+      <Button onClick={saveSchema}>Save</Button>
       <Button onClick={clear}>Clear</Button>
       
-      <JsonSchemaList setStore={setStore}/>
+      <JsonSchemaList setStore={setStore} setSchemaList={setSchemaList}/>
     </StyledToolbox>
   );
 };

@@ -138,6 +138,9 @@ export type ContextType = {
   setEditing: (id: string, isEditing: boolean) => void;
   moveUp: (node: TreeNode) => void;
   moveDown: (node: TreeNode) => void;
+
+  schemaList: any[];
+  appendSchema: (schema: any) => void;
 };
 
 export const Context = createContext<ContextType>(
@@ -230,4 +233,17 @@ export const useMoveUp = () => {
 export const useMoveDown = () => {
   const {moveDown} = useContext(Context);
   return moveDown;
+}
+
+// schema
+export const useSchemaList = () => {
+  const { schemaList } = useContext(Context);
+  return useMemo(() => {
+    return schemaList
+  }, [schemaList])
+}
+
+export const useAppendSchema = () => {
+  const {appendSchema} = useContext(Context);
+  return appendSchema;
 }

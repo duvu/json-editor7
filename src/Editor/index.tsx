@@ -7,6 +7,9 @@ import JsonView from './JsonView';
 import JsonSchemaView from './JsonSchemaView';
 
 const Editor: React.FC = () => {
+  // --------------------------------------------------
+  // treeStore
+  // --------------------------------------------------
   const [treeStore, setTreeStore] = useState<TreeStore>([
     {
       id: 'root',
@@ -94,8 +97,20 @@ const Editor: React.FC = () => {
     }
   } , [treeStore]);
 
+  // --------------------------------------------------
+  // Schema
+  // --------------------------------------------------
+  const [schemaList, setSchemaList] = useState<any[]>([]);
+  const appendSchema = useCallback((schema: any) => {
+    console.log('appendSchema', schema);
+    setSchemaList((x) => {
+      return [...x, schema]
+    });
+  }, []);
+
   const contextValue = useMemo(() => {
     return {
+      // Tree
       treeStore,
       clear,
       append,
@@ -104,8 +119,12 @@ const Editor: React.FC = () => {
       setEditing,
       moveUp,
       moveDown,
+      // Schema
+      schemaList,
+      appendSchema
     };
-  }, [append, remove, edit, setEditing, moveUp, moveDown, treeStore]);
+  }, [append, remove, edit, setEditing, moveUp, moveDown, treeStore,
+     schemaList, appendSchema]);
 
   return (
     <Context.Provider value={contextValue}>
@@ -113,8 +132,12 @@ const Editor: React.FC = () => {
         <TreeView />
         <JsonView/>
         <JsonSchemaView/>
-        <Toolbox clear = {clear} setStore={setTreeStore}/>
-        
+        <Toolbox
+          clear = {clear}
+          setStore={setTreeStore} 
+          setSchemaList={setSchemaList}
+          appendSchema={appendSchema}
+        />
       </Container>
     </Context.Provider>
   );
