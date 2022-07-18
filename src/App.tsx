@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import Editor from './Editor';
+import JsonIcon from './images/json-icon-blue.png'
 function App() {
   return (
     <AppWrapper>
-      <Header>LOGO</Header>
+      <Header><Logo src={JsonIcon} alt="logo"></Logo></Header>
       <main>
         <Editor/>
       </main>
@@ -17,12 +18,16 @@ const Header = styled.header`
   align-items: center;
   height: 50px;
   grid-area: header;
-  padding-left: 20px;
+  padding-left: 26px;
   padding-right: 20px;
   background-color: #222;
   color: #fff;
 `;
 
+const Logo = styled.img`
+  width: 40px;
+  height: 40px;
+`
 const AppWrapper = styled.div`
   display: grid;
   height: 100vh;
@@ -35,7 +40,7 @@ const AppWrapper = styled.div`
     grid-area: main;
     height: calc(100vh - 50px);
   }
-
+  background-color: #f5f8fa;
 `;
 
 export default App;
