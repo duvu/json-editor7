@@ -2,6 +2,12 @@ import {ItemType, TreeNode, useAppend, useDel, useEdit, useEditing, useMoveDown,
 import {useCallback, useState} from "react";
 import styled from "styled-components";
 import { nanoid } from "nanoid";
+import jsonIcon from '../images/json-icon-blue.png'
+import IconEdit from "../images/edit.png";
+import IconDelete from "../images/delete.png";
+import IconUp from "../images/up.png";
+import IconDown from "../images/down.png";
+import IconSave from "../images/save.png";
 
 const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
     const delHook = useDel();
@@ -73,46 +79,39 @@ const NodeView: React.FC<TreeNode> = (node: TreeNode) => {
     }, [editHook]);
 
     return (
-        <StyledNodeView>
-            <Node
-                draggable
-                dragOver={dragOver}
-                onDragOver={onDragOver}
-                onDragLeave={onDragLeave}
-                onDrop={(e) => onDrop(e)}
+      <StyledNodeView>
+        <Node
+          draggable
+          dragOver={dragOver}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={(e) => onDrop(e)}
+          onDragStart={onDragStart}
+          data-item={JSON.stringify(node)}
+          data-node-id={node.id}
+        >
+          <ImageLogo src={jsonIcon} alt="Json icon"></ImageLogo>
+          <StyledContentNode>
+            {node.isEditing ? (
+              <EditName node={node} setEdit={setEdit} setNewName={setNewName} />
+            ) : (
+              node.type + ": " + node.name
+            )}
+            {!node?.isEditing && <GroupButton>
+              <IconAction onClick={() => setEdit(node.id, true)} src={IconEdit} alt="edit"></IconAction>
+              {node.id !== "root" && <IconAction onClick={remove} src={IconDelete} alt="edit"></IconAction>}
+              {node.id !== "root" && <IconAction onClick={up} src={IconUp} alt="edit"></IconAction>}
+              {node.id !== "root" && <IconAction onClick={down} src={IconDown} alt="edit"></IconAction>}
+            </GroupButton>}
+          </StyledContentNode>
+        </Node>
 
-                onDragStart={onDragStart}
-                data-item={JSON.stringify(node)}
-                data-node-id={node.id}>
-
-                
-                {
-                    node.isEditing ? <EditName node={node} setEdit={setEdit} setNewName={setNewName}/> : node.type + ': ' + node.name
-                        
-                }
-                
-                    <Button onClick={() => setEdit(node.id, true)}>edit</Button>
-                    {
-                        node.id !== 'root' && <Button onClick={remove}>del</Button>
-                    }
-                    {
-                        node.id !== 'root' && <Button onClick={up}>up</Button>
-                    }
-                    {
-                        node.id !== 'root' && <Button onClick={down}>down</Button>
-                    }
-
-            
-            </Node>
-
-            <ChildrenView>
-                {
-                    node.children?.map((child) => (
-                        <NodeView key={child.id} {...child} />
-                    ))
-                }
-            </ChildrenView>
-        </StyledNodeView>
+        <ChildrenView>
+          {node.children?.map((child) => (
+            <NodeView key={child.id} {...child} />
+          ))}
+        </ChildrenView>
+      </StyledNodeView>
     );
 };
 
@@ -134,14 +133,19 @@ const EditName: React.FC<EditNameProps> = (props) => {
     }
 
     return (
-        <form onSubmit={onSubmit}>
-            <label>Name: </label>
-            <input type="text" value={node.name} onChange={onNewName}/>
-            <Button type="submit">ok</Button>
-        </form>
+        <Form onSubmit={onSubmit}>
+            <LabelEdit>Name:</LabelEdit>
+            <InputEdit type="text" value={node.name} onChange={onNewName}></InputEdit>
+            <IconActionSave onClick={() => onSubmit()} src={IconSave} alt="edit"></IconActionSave>
+        </Form>
     )
 }
 
+const ImageLogo = styled.img`
+  width: 45px;
+  height: 45px;
+  margin-right: 16px;
+`;
 
 const ChildrenView = styled.div`
   padding-left: 15px;
@@ -153,9 +157,19 @@ const ChildrenView = styled.div`
     left: 15px;
     top: 0px;
     width: 1px;
-    background-color: #f0f0f0;
+    background-color: #f2f2f2;
     position: absolute;
   }
+  &:hover:before {
+    background-color: #bfbfbf;
+  }
+`;
+
+const StyledContentNode = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 const StyledNodeView = styled.div`
@@ -164,35 +178,80 @@ const StyledNodeView = styled.div`
 `;
 
 const Node = styled.div<{ dragOver: boolean }>`
-  border: 1px solid #d8d8d8;
-  padding: 5px 10px;
+  padding: 10px 10px 10px 2px;
   position: relative;
-  background-color: ${(p) => (p.dragOver ? '#ddd5' : undefined)};
+  border: 1px dashed transparent;
+  background-color: ${(p) => (p.dragOver ? "#f2f2f2" : undefined)};
+  border-radius: ${(p) => (p.dragOver ? "8px" : undefined)};
+  border-color: ${(p) => (p.dragOver ? "#f05142" : "")};
   &::before {
-    content: '';
+    content: "";
     height: 1px;
     top: calc(50% - 1px);
     width: 15px;
     right: 100%;
-    background-color: #f0f0f0;
+    background-color: #f2f2f2;
     position: absolute;
+  }
+  &:hover:before {
+    background-color: #bfbfbf;
+  }
+  cursor: move;
+  display: flex;
+  align-items: center;
+`;
+
+const GroupButton = styled.div`
+  display: flex;
+  
+`;
+
+const IconAction = styled.img`
+  border: none;
+  cursor: pointer;
+  width: 17px;
+  height: 17px;
+  margin-right: 10px;
+  margin-top: 5px;
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
   }
 `;
 
-const NodeLabel = styled.div`
-    grid-area: label;
+const IconActionSave = styled.img`
+  border: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
+  }
 `;
 
-const NodeActions = styled.div`
-    grid-area: actions;
+const LabelEdit = styled.label`
+  font-size: 16px;
+  margin-right: 10px;
+`
+
+const InputEdit = styled.input`
+  border: 1px solid #e4e6ef;
+  border-radius: 4px;
+  height: 35px;
+  width: 250px;
+  padding-left: 10px;
+  background-color: #f5f8fa;
+  color: #5e6278;
+  outline: none;
+  &:focus {
+    background-color: #eef3f7;
+  }
 `;
 
-const Button = styled.button`
-  color: palevioletred;
-  font-size: 1em;
-  margin: 0.25em;
-  padding: 0.25em 0.25em;
-  border: 1px solid palevioletred;
-  border-radius: 10px;
+const Form = styled.form`
+  display: flex;
+  align-items: center;
 `;
 

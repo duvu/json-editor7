@@ -4,7 +4,6 @@ import { Context, TreeStore, TreeNode } from './model';
 import Toolbox from './Toolbox';
 import TreeView from './TreeView';
 import JsonView from './JsonView';
-import JsonSchemaView from './JsonSchemaView';
 
 const Editor: React.FC = () => {
   // --------------------------------------------------
@@ -81,7 +80,7 @@ const Editor: React.FC = () => {
     if (orderId > 1) {
       const preNode = treeStore.find(x => x.parent === node.parent && x.orderId === orderId - 1);
       const newTreeStore = treeStore.filter(x => x.id !== node.id && x.id !== preNode.id);
-      newTreeStore.push({...node, orderId: preNode.orderId});
+      newTreeStore.push({...node, orderId: preNode?.orderId});
       newTreeStore.push({...preNode, orderId: orderId});
       setTreeStore(newTreeStore);
     }
@@ -131,7 +130,6 @@ const Editor: React.FC = () => {
       <Container>
         <TreeView />
         <JsonView/>
-        <JsonSchemaView/>
         <Toolbox
           clear = {clear}
           setStore={setTreeStore} 
@@ -147,7 +145,8 @@ export default Editor;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 3fr 2fr 1fr 1fr;
-  grid-gap: 0.25rem;
-  height: calc(100vh - 50px);
+  grid-template-columns: 2.5fr 2.5fr 1.3fr;
+  grid-gap: 1.5rem;
+  height: 82vh;
+  padding: 20px 30px;
 `;
